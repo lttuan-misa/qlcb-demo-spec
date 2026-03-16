@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QLCB – Cơ cấu tổ chức | Prototype 002</title>
+  <link rel="preconnect" href="https://rsms.me/" />
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+  <style>
+    /* ====================================================
+       MISA Design System Tokens
+       Source: https://mind-glyph-46433684.figma.site/
+    ==================================================== */
+    :root {
+      --font: "Inter", "Segoe UI", sans-serif;
+
+      /* Brand / Primary */
+      --c-brand:           #5d51f9;
+      --c-brand-hover:     #4a3fe0;
+      --c-brand-pressed:   #3a30c4;
+      --c-brand-subtle:    #eeecfe;
+      --c-brand-ink:       #ffffff;
+
+      /* Neutral surface */
+      --c-bg:              #f3f5f7;
+      --c-surface:         #ffffff;
+      --c-surface-alt:     #f8fafc;
+      --c-border:          #d0d5dd;
+      --c-border-hover:    #98a2b3;
+
+      /* Text */
+      --c-ink:             #1d2939;
+      --c-ink-2:           #344054;
+      --c-muted:           #667085;
+      --c-placeholder:     #98a2b3;
+
+      /* Semantic */
+      --c-success:         #067647;
+      --c-success-bg:      #d1fadf;
+      --c-success-border:  #a9efca;
+      --c-warning:         #b54708;
+      --c-warning-bg:      #fef3e2;
+      --c-warning-border:  #fcd892;
+      --c-danger:          #d92d20;
+      --c-danger-bg:       #fef3f2;
+      --c-danger-border:   #fda29b;
+
+      /* Sidebar */
+      --c-sidebar-bg:      #1a2332;
+      --c-sidebar-text:    #c9d7e8;
+      --c-sidebar-active:  rgba(93,81,249,0.18);
+      --c-sidebar-active-text: #a89ffc;
+      --c-sidebar-hover:   rgba(255,255,255,0.06);
+
+      /* Header */
+      --c-header-bg:       var(--c-brand);
+      --c-header-ink:      #ffffff;
+
+      /* Radius */
+      --r-xs: 4px;
+      --r-sm: 8px;
+      --r-md: 10px;
+      --r-lg: 12px;
+      --r-full: 999px;
+
+      /* Shadow */
+      --shadow-xs: 0 1px 2px rgba(16,24,40,.04);
+      --shadow-sm: 0 1px 3px rgba(16,24,40,.10), 0 1px 2px rgba(16,24,40,.06);
+      --shadow-md: 0 4px 12px rgba(16,24,40,.10);
+      --shadow-lg: 0 12px 32px rgba(16,24,40,.16);
+      --shadow-overlay: 0 20px 60px rgba(16,24,40,.20);
+
+      /* Spacing */
+      --s1:4px; --s2:8px; --s3:12px; --s4:16px;
+      --s5:20px; --s6:24px; --s7:32px; --s8:40px;
+
+      /* Focus */
+      --focus-ring: 0 0 0 2px rgba(93,81,249,.25);
+    }
+
+    /* ====================================================  Reset  ==================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 13px; }
+
+    body {
+      font-family: var(--font);
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--c-ink);
+      background: var(--c-bg);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--c-brand); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    button { font-family: var(--font); }
+
+    /* ====================================================
+       APP SHELL — Sidebar + Header + Content
+    ==================================================== */
+    .app { display: flex; height: 100vh; overflow: hidden; }
+
+    /* ---- Sidebar ---- */
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: var(--c-sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      padding: 14px var(--s4);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .sidebar-brand-icon {
+      width: 28px; height: 28px;
+      background: var(--c-brand);
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; color: #fff;
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand-name {
+      font-size: 14px; font-weight: 700; color: #fff;
+    }
+
+    .sidebar-brand-name small {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--c-sidebar-text);
+      opacity: .7;
+      margin-top: 1px;
+    }
+
+    .sidebar-group {
+      padding: var(--s3) var(--s4) var(--s1);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: #5a7394;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      padding: 9px var(--s5) 9px 20px;
+      font-size: 13px;
+      color: var(--c-sidebar-text);
+      cursor: pointer;
+      text-decoration: none;
+      border-right: 3px solid transparent;
+      transition: background .1s, color .1s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sidebar-item:hover {
+      background: var(--c-sidebar-hover);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .sidebar-item.active {
+      background: var(--c-sidebar-active);
+      color: var(--c-sidebar-active-text);
+      font-weight: 600;
+      border-right-color: var(--c-brand);
+    }
+
+    .sidebar-item-icon { font-size: 14px; flex-shrink: 0; width: 18px; text-align: center; }
+
+    /* ---- Main area ---- */
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ---- Header bar ---- */
+    .header-bar {
+      height: 48px;
+      background: var(--c-header-bg);
+      color: var(--c-header-ink);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--s5);
+      gap: var(--s4);
+      justify-content: space-between;
+      flex-shrink: 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,.15);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .header-left .sep { opacity: .5; }
+    .header-left .current-page { font-weight: 600; }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+    }
+
+    .header-icon-btn {
+      width: 32px; height: 32px;
+      border: 1.5px solid rgba(255,255,255,.3);
+      background: rgba(255,255,255,.12);
+      border-radius: var(--r-sm);
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .12s;
+    }
+    .header-icon-btn:hover { background: rgba(255,255,255,.22); }
+
+    .header-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.25);
+      border: 2px solid rgba(255,255,255,.5);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+
+    /* ---- Page content ---- */
+    .page-wrap {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--s5) var(--s6);
+    }
+
+    /* ====================================================  SCREENS  ==================================================== */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ====================================================  BREADCRUMB  ==================================================== */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--c-muted);
+      margin-bottom: var(--s3);
+    }
+    .breadcrumb a { color: var(--c-muted); }
+    .breadcrumb a:hover { color: var(--c-brand); text-decoration: none; }
+    .breadcrumb .sep { color: var(--c-border); }
+    .breadcrumb .cur { color: var(--c-ink); font-weight: 500; }
+
+    /* ====================================================  PAGE HEADER  ==================================================== */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--s4);
+      margin-bottom: var(--s4);
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--c-ink);
+      line-height: 1.3;
+    }
+
+    .page-header-actions { display: flex; gap: var(--s2); align-items: center; }
+
+    /* ====================================================  PANEL  ==================================================== */
+    .panel {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      box-shadow: var(--shadow-xs);
+    }
+
+    /* ====================================================  TOOLBAR  ==================================================== */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--s3);
+      padding: var(--s3) var(--s4);
+      border-bottom: 1px solid var(--c-border);
+      flex-wrap: wrap;
+    }
+
+    .toolbar-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--c-ink);
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+    }
+
+    .count-badge {
+      background: #f2f4f7;
+      color: var(--c-muted);
+      border-radius: var(--r-full);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 1px 8px;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    .toolbar-actions { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
+
+    /* ====================================================  BUTTONS  ==================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--s1);
+      height: 36px;
+      min-width: 80px;
+      padding: 0 14px;
+      border-radius: var(--r-sm);
+      font-size: 13px;
+      font-family: var(--font);
+      font-weight: 600;
+      line-height: 1;
+      cursor: pointer;
+      border: 1px solid var(--c-border);
+      background: var(--c-surface);
+      color: var(--c-ink-2);
+      white-space: nowrap;
+      text-decoration: none;
+      transition: background .12s, border-color .12s, color .12s;
+      outline: none;
+    }
+    .btn:hover { background: var(--c-surface-alt); }
+    .btn:active { background: #edf0f4; }
+    .btn:focus-visible { box-shadow: var(--focus-ring); outline: none; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; pointer-events: none; }
+
+    .btn-primary {
+      background: var(--c-brand);
+      border-color: var(--c-brand);
+      color: var(--c-brand-ink);
+    }
+    .btn-primary:hover { background: var(--c-brand-hover); border-color: var(--c-brand-hover); }
+    .btn-primary:active { background: var(--c-brand-pressed); border-color: var(--c-brand-pressed); }
+
+    .btn-danger {
+      background: var(--c-danger);
+      border-color: var(--c-danger);
+      color: #fff;
+    }
+    .btn-danger:hover { background: #b91c1c; border-color: #b91c1c; }
+
+    .btn-ghost {
+      border-color: transparent;
+      background: transparent;
+      color: var(--c-muted);
+      min-width: auto;
+    }
+    .btn-ghost:hover { background: var(--c-surface-alt); color: var(--c-ink); }
+
+    .btn-link {
+      background: none;
+      border: none;
+      color: var(--c-brand);
+      padding: 0 4px;
+      height: auto;
+      min-width: auto;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+    }
+    .btn-link:hover { text-decoration: underline; }
+    .btn-link.danger { color: var(--c-danger); }
+    .btn-link.warning { color: var(--c-warning); }
+
+    .btn-icon {
+      width: 32px; height: 32px;
+      min-width: 32px;
+      padding: 0;
+    }
+
+    /* ====================================================  INPUTS / SELECTS  ==================================================== */
+    .input-wrap { position: relative; }
+    .input-wrap .input-icon {
+      position: absolute;
+      left: 10px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--c-muted);
+      pointer-events: none;
+      font-size: 14px;
+    }
+
+    input[type=text], input[type=search], select, textarea {
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--c-ink);
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      outline: none;
+      transition: border-color .12s, box-shadow .12s;
+    }
+
+    input[type=text]::placeholder, input[type=search]::placeholder, textarea::placeholder {
+      color: var(--c-placeholder);
+    }
+
+    input[type=text]:hover, input[type=search]:hover, select:hover, textarea:hover {
+      border-color: var(--c-border-hover);
+    }
+
+    input[type=text]:focus, input[type=search]:focus, select:focus, textarea:focus {
+      border-color: var(--c-brand);
+      box-shadow: var(--focus-ring);
+    }
+
+    .search-input {
+      width: 240px;
+      height: 36px;
+      padding: 0 10px 0 34px;
+    }
+
+    .filter-select {
+      height: 36px;
+      padding: 0 28px 0 10px;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667085' d='M2 4l4 4 4-4z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+
+      cursor: pointer;
+      min-width: 148px;
+    }
+
+    /* view toggle */
+    .view-toggle {
+      display: inline-flex;
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      overflow: hidden;
+    }
+    .view-btn {
+      height: 36px;
+      padding: 0 12px;
+      font-size: 13px;
+      font-family: var(--font);
+      font-weight: 500;
+      border: none;
+      background: var(--c-surface);
+      color: var(--c-muted);
+      cursor: pointer;
+      transition: background .1s, color .1s;
+    }
+    .view-btn + .view-btn { border-left: 1px solid var(--c-border); }
+    .view-btn:hover { background: var(--c-surface-alt); color: var(--c-ink); }
+    .view-btn.active { background: var(--c-brand-subtle); color: var(--c-brand); font-weight: 600; }
+
+    /* ====================================================  BADGES  ==================================================== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: var(--r-full);
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+    .badge-active {
+      color: var(--c-success);
+      background: var(--c-success-bg);
+      border-color: var(--c-success-border);
+    }
+    .badge-inactive {
+      color: var(--c-warning);
+      background: var(--c-warning-bg);
+      border-color: var(--c-warning-border);
+    }
+    .badge-neutral {
+      color: #344054;
+      background: #f2f4f7;
+      border-color: #d0d5dd;
+    }
+
+    /* ====================================================  TABLE  ==================================================== */
+    .table-wrap { overflow-x: auto; }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .data-table thead th {
+      background: var(--c-surface-alt);
+      padding: 9px 12px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: #475467;
+      border-bottom: 1px solid var(--c-border);
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .data-table tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f0f2f5;
+      vertical-align: middle;
+    }
+
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody tr { background: #fff; transition: background .1s; }
+    .data-table tbody tr:hover { background: #f9fafb; }
+    .data-table tbody tr:hover .row-actions { opacity: 1; }
+
+    .row-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--s1);
+      opacity: 0;
+      transition: opacity .1s;
+    }
+
+    .cell-code {
+      font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: 11.5px;
+      background: #f2f4f7;
+      color: var(--c-ink-2);
+      padding: 2px 6px;
+      border-radius: var(--r-xs);
+    }
+
+    .cell-sub { font-size: 12px; color: var(--c-muted); margin-top: 2px; }
+
+    /* ====================================================  PAGINATION  ==================================================== */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--s3) var(--s4);
+      border-top: 1px solid var(--c-border);
+      font-size: 13px;
+      color: var(--c-muted);
+      gap: var(--s3);
+    }
+
+    .pagination-pages { display: flex; gap: var(--s1); }
+
+    .page-btn {
+      width: 32px; height: 32px;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--c-border);
+      background: var(--c-surface);
+      font-size: 13px;
+      font-family: var(--font);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      color: var(--c-ink);
+      outline: none;
+      transition: background .1s;
+    }
+    .page-btn:hover { background: var(--c-surface-alt); }
+    .page-btn.active { background: var(--c-brand); border-color: var(--c-brand); color: #fff; font-weight: 700; }
+    .page-btn:disabled { opacity: .4; cursor: default; pointer-events: none; }
+
+    /* ====================================================  TREE VIEW  ==================================================== */
+    .tree-list, .tree-children { list-style: none; padding: 0; margin: 0; }
+    .tree-children { padding-left: 28px; }
+    .tree-container { padding: var(--s3) var(--s2); }
+
+    .tree-item { }
+
+    .tree-row {
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      padding: 8px 10px;
+      border-radius: var(--r-sm);
+      cursor: default;
+    }
+    .tree-row:hover { background: #f0f4f8; }
+    .tree-row:hover .row-actions { opacity: 1; }
+
+    .tree-toggle {
+      width: 20px; height: 20px;
+      border-radius: var(--r-xs);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+      color: var(--c-muted);
+      flex-shrink: 0;
+    }
+    .tree-toggle:hover { background: var(--c-brand-subtle); color: var(--c-brand); }
+    .tree-toggle:disabled { opacity: 0; cursor: default; }
+
+    .tree-node-icon { font-size: 16px; flex-shrink: 0; }
+
+    .tree-node-body { flex: 1; min-width: 0; }
+    .tree-node-name { font-size: 13px; font-weight: 500; }
+    .tree-node-desc { font-size: 11.5px; color: var(--c-muted); margin-top: 2px; }
+
+    .tree-node-meta { display: flex; align-items: center; gap: var(--s2); margin-left: auto; flex-shrink: 0; }
+
+    /* ====================================================  EMPTY STATE  ==================================================== */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 52px var(--s6);
+      text-align: center;
+    }
+    .empty-icon { font-size: 44px; margin-bottom: var(--s3); opacity: .45; }
+    .empty-title { font-size: 16px; font-weight: 600; color: var(--c-ink-2); margin-bottom: var(--s2); }
+    .empty-desc { font-size: 13px; color: var(--c-muted); max-width: 340px; margin-bottom: var(--s4); line-height: 1.6; }
+
+    /* ====================================================  SKELETON  ==================================================== */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0ff 25%, #e8e6ff 50%, #f0f0ff 75%);
+      background-size: 200% 100%;
+      border-radius: var(--r-sm);
+      animation: shimmer 1.4s ease-in-out infinite;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skeleton-row { height: 40px; margin-bottom: var(--s2); }
+
+    /* ====================================================  MODAL (ADD / EDIT)  ==================================================== */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(16,24,40,.44);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--s6);
+    }
+    .overlay.open { display: flex; }
+
+    .modal {
+      background: var(--c-surface);
+      border-radius: var(--r-sm);
+      box-shadow: var(--shadow-overlay);
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      animation: fadeSlide .18s ease;
+    }
+    @keyframes fadeSlide {
+      from { transform: translateY(-10px); opacity: 0; }
+      to   { transform: translateY(0);     opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--s5);
+      border-bottom: 1px solid var(--c-border);
+      flex-shrink: 0;
+    }
+    .modal-title { font-size: 18px; font-weight: 700; }
+
+    .modal-body { padding: var(--s5); overflow-y: auto; flex: 1; }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--s2);
+      padding: var(--s4) var(--s5);
+      border-top: 1px solid var(--c-border);
+      flex-shrink: 0;
+    }
+
+    /* form fields inside modal */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s4) var(--s5);
+    }
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .form-field { display: flex; flex-direction: column; gap: 5px; }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--c-ink-2);
+    }
+    .form-label .req { color: var(--c-danger); margin-left: 2px; }
+    .form-label .opt { color: var(--c-muted); font-weight: 400; font-size: 12px; margin-left: 4px; }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--c-ink);
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      outline: none;
+      transition: border-color .12s, box-shadow .12s;
+    }
+    .form-input { height: 36px; padding: 0 12px; }
+    .form-select { height: 36px; padding: 0 28px 0 12px; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667085' d='M2 4l4 4 4-4z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center; cursor: pointer;
+    }
+    .form-textarea { padding: 9px 12px; min-height: 88px; resize: vertical; }
+
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--c-placeholder); }
+    .form-input:hover, .form-select:hover, .form-textarea:hover { border-color: var(--c-border-hover); }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--c-brand);
+      box-shadow: var(--focus-ring);
+    }
+    .form-input.err, .form-select.err, .form-textarea.err { border-color: var(--c-danger); }
+
+    .form-hint { font-size: 12px; color: var(--c-muted); }
+    .form-err-msg {
+      font-size: 12px;
+      color: var(--c-danger);
+      display: none;
+      align-items: center;
+      gap: 4px;
+    }
+    .form-err-msg.visible { display: flex; }
+
+    /* ====================================================  DIALOG (Confirm)  ==================================================== */
+    .dialog-overlay {
+      position: fixed; inset: 0;
+      background: rgba(16,24,40,.44);
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--s6);
+    }
+    .dialog-overlay.open { display: flex; }
+
+    .dialog {
+      background: var(--c-surface);
+      border-radius: var(--r-sm);
+      box-shadow: var(--shadow-overlay);
+      width: 100%; max-width: 440px;
+      overflow: hidden;
+      animation: fadeSlide .15s ease;
+    }
+
+    .dialog-body {
+      display: flex;
+      gap: var(--s4);
+      align-items: flex-start;
+      padding: var(--s6) var(--s6) var(--s4);
+    }
+    .dialog-icon {
+      width: 44px; height: 44px; border-radius: var(--r-full);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .dialog-icon.warn  { background: var(--c-warning-bg); }
+    .dialog-icon.info  { background: #eff8ff; }
+    .dialog-icon.danger{ background: var(--c-danger-bg); }
+
+    .dialog-content .dialog-title { font-size: 16px; font-weight: 700; margin-bottom: var(--s2); }
+    .dialog-content .dialog-desc  { font-size: 13px; color: var(--c-muted); line-height: 1.65; }
+
+    .dialog-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--s2);
+      padding: var(--s3) var(--s6) var(--s5);
+      border-top: 1px solid var(--c-border);
+    }
+
+    /* ====================================================  TOAST  ==================================================== */
+    #toast-stack {
+      position: fixed;
+      right: var(--s5); bottom: var(--s5);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      gap: var(--s2);
+      pointer-events: none;
+    }
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      background: #3730a3;
+      color: #fff;
+      padding: 12px var(--s4);
+      border-radius: var(--r-sm);
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      min-width: 280px;
+      max-width: 400px;
+      pointer-events: all;
+      animation: toastIn .22s ease;
+    }
+    .toast.error { background: #7f1d1d; }
+    @keyframes toastIn {
+      from { transform: translateX(24px); opacity: 0; }
+      to   { transform: translateX(0);     opacity: 1; }
+    }
+    .toast-close { margin-left: auto; cursor: pointer; opacity: .7; font-size: 14px; }
+    .toast-close:hover { opacity: 1; }
+
+    /* ====================================================  DETAIL SCREEN  ==================================================== */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s4) var(--s7);
+    }
+    .detail-grid.full { grid-template-columns: 1fr; }
+    .detail-grid .full { grid-column: 1 / -1; }
+
+    .dfield label {
+      display: block;
+      font-size: 12px;
+      color: var(--c-muted);
+      margin-bottom: 3px;
+    }
+    .dfield .val { font-size: 13px; font-weight: 500; }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--c-muted);
+      margin: var(--s5) 0 var(--s4);
+      padding-bottom: var(--s2);
+      border-bottom: 1px solid var(--c-border);
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    /* ====================================================  STATUS BAR  ==================================================== */
+    .status-bar {
+      padding: 8px var(--s4);
+      background: var(--c-surface-alt);
+      border-bottom: 1px solid var(--c-border);
+      font-size: 12px;
+      color: var(--c-muted);
+    }
+
+    /* For inner panel padding */
+    .panel-body { padding: var(--s5); }
+
+    /* space between panels */
+    .mt-4 { margin-top: var(--s4); }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ========== SIDEBAR ========== -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">Q</div>
+      <div class="sidebar-brand-name">MISA QLCB<small>Quản lý Cán bộ</small></div>
+    </div>
+
+    <span class="sidebar-group">Danh mục</span>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">📋</span>Chức vụ, Chức danh</a>
+    <a class="sidebar-item active" href="#" onclick="return false;"><span class="sidebar-item-icon">🏢</span>Cơ cấu tổ chức</a>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">📊</span>Ngạch, Bậc lương</a>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">📄</span>Loại hợp đồng</a>
+
+    <span class="sidebar-group">Hồ sơ CBCCVC</span>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">👥</span>Danh sách CBCCVC</a>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">📝</span>Tuyển dụng</a>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🔄</span>Điều động, Chuyển ngạch</a>
+
+    <span class="sidebar-group">Báo cáo</span>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">📈</span>Báo cáo biên chế</a>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🗂</span>Báo cáo tổ chức</a>
+
+    <span class="sidebar-group">Hệ thống</span>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">⚙️</span>Cấu hình</a>
+    <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🔑</span>Phân quyền</a>
+  </nav>
+
+  <!-- ========== MAIN AREA ========== -->
+  <div class="main">
+
+    <!-- Header bar -->
+    <div class="header-bar">
+      <div class="header-left">
+        <span>MISA QLCB</span>
+        <span class="sep">›</span>
+        <span>Danh mục</span>
+        <span class="sep">›</span>
+        <span class="current-page">Cơ cấu tổ chức</span>
+      </div>
+      <div class="header-right">
+        <button class="header-icon-btn" title="Thông báo">🔔</button>
+        <button class="header-icon-btn" title="Trợ giúp">❓</button>
+        <div class="header-avatar" title="Nguyễn Văn A – Quản trị tổ chức">A</div>
+      </div>
+    </div>
+
+    <!-- Page wrap scrollable -->
+    <div class="page-wrap">
+
+      <!-- ====================================================
+           SCREEN 1 – DANH SÁCH (LIST)
+      ==================================================== -->
+      <div class="screen active" id="screen-list">
+
+        <nav class="breadcrumb">
+          <a href="#">Trang chủ</a><span class="sep">›</span>
+          <a href="#">Danh mục</a><span class="sep">›</span>
+          <span class="cur">Cơ cấu tổ chức</span>
+        </nav>
+
+        <div class="page-header">
+          <h1 class="page-title">Cơ cấu tổ chức</h1>
+        </div>
+
+        <div class="panel">
+          <!-- Toolbar -->
+          <div class="toolbar">
+            <div class="toolbar-title">
+              Danh sách đơn vị
+              <span class="count-badge" id="count-badge">6</span>
+            </div>
+            <div class="toolbar-actions">
+              <div class="input-wrap">
+                <span class="input-icon">🔍</span>
+                <input type="search" class="search-input" id="inp-search"
+                  placeholder="Tìm theo mã, tên đơn vị…"
+                  oninput="applyFilter()" />
+              </div>
+              <select class="filter-select" id="sel-loai" onchange="applyFilter()">
+                <option value="">Tất cả loại</option>
+                <option value="hanhchinh">Đơn vị hành chính</option>
+                <option value="sunghiep">Đơn vị sự nghiệp công lập</option>
+                <option value="ctxh">Tổ chức CT - XH</option>
+                <option value="xhnn">Tổ chức XH - NN</option>
+              </select>
+              <select class="filter-select" id="sel-status" onchange="applyFilter()">
+                <option value="">Tất cả trạng thái</option>
+                <option value="active">Đang hoạt động</option>
+                <option value="inactive">Ngừng hoạt động</option>
+              </select>
+              <div class="view-toggle">
+                <button class="view-btn active" id="btn-view-list" onclick="switchView('list')">☰ Bảng</button>
+                <button class="view-btn"        id="btn-view-tree" onclick="switchView('tree')">🌳 Cây</button>
+              </div>
+              <button class="btn btn-primary" onclick="openAdd()">+ Thêm mới</button>
+            </div>
+          </div>
+
+          <!-- Status bar -->
+          <div class="status-bar" id="status-bar">Đang hiển thị 6 / 6 đơn vị</div>
+
+          <!-- TABLE VIEW -->
+          <div id="view-list">
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width:40px">#</th>
+                    <th>Mã đơn vị</th>
+                    <th>Tên đơn vị</th>
+                    <th>Loại tổ chức</th>
+                    <th>Đơn vị cha</th>
+                    <th style="text-align:right;width:76px">CBCCVC</th>
+                    <th>Trạng thái</th>
+                    <th style="width:140px">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+              </table>
+            </div>
+            <!-- Empty state (hidden by default) -->
+            <div id="empty-list" class="empty-state" style="display:none">
+              <div class="empty-icon">🏗</div>
+              <div class="empty-title">Không tìm thấy đơn vị</div>
+              <div class="empty-desc">Thử thay đổi bộ lọc hoặc thêm đơn vị mới vào hệ thống cơ cấu tổ chức.</div>
+              <button class="btn btn-primary" onclick="openAdd()">+ Thêm đơn vị đầu tiên</button>
+            </div>
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+              <span id="pag-info">Hiển thị 1–6 trong 6 bản ghi</span>
+              <div class="pagination-pages">
+                <button class="page-btn" disabled>‹</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn" disabled>›</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TREE VIEW (hidden by default) -->
+          <div id="view-tree" style="display:none">
+            <div class="tree-container">
+              <ul class="tree-list" id="tree-root"></ul>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /screen-list -->
+
+
+      <!-- ====================================================
+           SCREEN 2 – CHI TIẾT (DETAIL)
+      ==================================================== -->
+      <div class="screen" id="screen-detail">
+
+        <nav class="breadcrumb">
+          <a href="#" onclick="goList();return false;">Trang chủ</a><span class="sep">›</span>
+          <a href="#" onclick="goList();return false;">Danh mục</a><span class="sep">›</span>
+          <a href="#" onclick="goList();return false;">Cơ cấu tổ chức</a><span class="sep">›</span>
+          <span class="cur" id="detail-crumb">Chi tiết đơn vị</span>
+        </nav>
+
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="detail-h1">Chi tiết đơn vị</h1>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn" onclick="goList()">← Quay lại</button>
+            <button class="btn" id="btn-toggle-status" onclick="onToggleStatus()">Ngừng hoạt động</button>
+            <button class="btn btn-primary" id="btn-edit-detail" onclick="onEditDetail()">✏ Sửa</button>
+          </div>
+        </div>
+
+        <!-- Info panel -->
+        <div class="panel panel-body">
+          <div class="section-title">Thông tin đơn vị</div>
+          <div class="detail-grid" id="detail-info"></div>
+
+          <div class="section-title">Kiểm tra / Audit</div>
+          <div class="detail-grid" id="detail-audit"></div>
+        </div>
+
+        <!-- Children panel -->
+        <div class="panel mt-4">
+          <div class="toolbar">
+            <div class="toolbar-title">
+              Đơn vị con trực thuộc
+              <span class="count-badge" id="children-count">0</span>
+            </div>
+          </div>
+          <div id="children-body"></div>
+        </div>
+
+      </div><!-- /screen-detail -->
+
+    </div><!-- /page-wrap -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+
+<!-- ====================================================
+     MODAL – THÊM MỚI / CẬP NHẬT ĐƠN VỊ
+==================================================== -->
+<div class="overlay" id="modal-overlay" onclick="closeModalBackdrop(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Thêm mới đơn vị</span>
+      <button class="btn btn-ghost btn-icon" onclick="closeModal()" title="Đóng">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <!-- Mã đơn vị -->
+        <div class="form-field">
+          <label class="form-label">Mã đơn vị<span class="req"> *</span></label>
+          <input class="form-input" id="f-ma" type="text" maxlength="30"
+            placeholder="VD: PHONG-TCCB" oninput="clearErr('ma')" />
+          <span class="form-err-msg" id="err-ma">⚠ Vui lòng nhập mã đơn vị</span>
+        </div>
+        <!-- Tên đơn vị -->
+        <div class="form-field">
+          <label class="form-label">Tên đơn vị<span class="req"> *</span></label>
+          <input class="form-input" id="f-ten" type="text" maxlength="120"
+            placeholder="VD: Phòng Tổ chức – Cán bộ" oninput="clearErr('ten')" />
+          <span class="form-err-msg" id="err-ten">⚠ Vui lòng nhập tên đơn vị</span>
+        </div>
+        <!-- Loại tổ chức -->
+        <div class="form-field">
+          <label class="form-label">Loại tổ chức<span class="req"> *</span></label>
+          <select class="form-select" id="f-loai" onchange="clearErr('loai')">
+            <option value="">— Chọn loại tổ chức —</option>
+            <option value="hanhchinh">Đơn vị hành chính</option>
+            <option value="sunghiep">Đơn vị sự nghiệp công lập</option>
+            <option value="ctxh">Tổ chức chính trị - xã hội</option>
+            <option value="xhnn">Tổ chức xã hội - nghề nghiệp</option>
+          </select>
+          <span class="form-err-msg" id="err-loai">⚠ Vui lòng chọn loại tổ chức</span>
+        </div>
+        <!-- Cấp quản lý -->
+        <div class="form-field">
+          <label class="form-label">Cấp quản lý<span class="req"> *</span></label>
+          <select class="form-select" id="f-cap" onchange="clearErr('cap')">
+            <option value="">— Chọn cấp quản lý —</option>
+            <option value="trungUong">Trung ương</option>
+            <option value="tinhTp">Tỉnh / Thành phố</option>
+            <option value="huyenQuan">Huyện / Quận</option>
+            <option value="xaPhuong">Xã / Phường / Thị trấn</option>
+          </select>
+          <span class="form-err-msg" id="err-cap">⚠ Vui lòng chọn cấp quản lý</span>
+        </div>
+        <!-- Đơn vị cha -->
+        <div class="form-field">
+          <label class="form-label">Đơn vị cha<span class="opt">(tùy chọn)</span></label>
+          <select class="form-select" id="f-cha">
+            <option value="">(Không có – gốc cây tổ chức)</option>
+          </select>
+        </div>
+        <!-- Trạng thái -->
+        <div class="form-field">
+          <label class="form-label">Trạng thái<span class="req"> *</span></label>
+          <select class="form-select" id="f-status">
+            <option value="active">Đang hoạt động</option>
+            <option value="inactive">Ngừng hoạt động</option>
+          </select>
+        </div>
+        <!-- Ghi chú -->
+        <div class="form-field full">
+          <label class="form-label">Ghi chú<span class="opt">(tùy chọn)</span></label>
+          <textarea class="form-textarea" id="f-note" maxlength="500" rows="3"
+            placeholder="Ghi chú thêm về đơn vị này…"></textarea>
+          <span class="form-hint">Tối đa 500 ký tự</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">Hủy</button>
+      <button class="btn btn-primary" id="btn-save" onclick="saveForm()">💾 Lưu</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ====================================================
+     DIALOG – XÁC NHẬN CHUYỂN TRẠNG THÁI
+==================================================== -->
+<div class="dialog-overlay" id="dialog-overlay" onclick="closeDialogBackdrop(event)">
+  <div class="dialog" onclick="event.stopPropagation()">
+    <div class="dialog-body">
+      <div class="dialog-icon warn" id="dlg-icon">⚠️</div>
+      <div class="dialog-content">
+        <div class="dialog-title" id="dlg-title">Chuyển trạng thái đơn vị?</div>
+        <div class="dialog-desc"  id="dlg-desc">Bạn có chắc chắn muốn thực hiện thao tác này?</div>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn" onclick="closeDialog()">Hủy</button>
+      <button class="btn btn-danger" id="dlg-confirm" onclick="confirmAction()">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Toast stack -->
+<div id="toast-stack"></div>
+
+
+<!-- ====================================================
+     JAVASCRIPT
+==================================================== -->
+<script>
+// ── DEMO DATA ────────────────────────────────────────────────────────────────
+const LOAI = {
+  hanhchinh: 'Đơn vị hành chính',
+  sunghiep:  'Đơn vị SN công lập',
+  ctxh:      'Tổ chức CT - XH',
+  xhnn:      'Tổ chức XH - NN',
+};
+
+const CAP = {
+  trungUong: 'Trung ương',
+  tinhTp:    'Tỉnh / Thành phố',
+  huyenQuan: 'Huyện / Quận',
+  xaPhuong:  'Xã / Phường / TT',
+};
+
+let DB = [
+  { id:1, ma:'BGD',   ten:'Ban Giám đốc',                loai:'hanhchinh', cap:'tinhTp',    cha:null, status:'active',   so:5,  note:'Đơn vị lãnh đạo cấp cao nhất', nguoiTao:'Admin',         ngayTao:'01/01/2024', nguoiSua:'Nguyễn Văn A', ngaySua:'10/03/2026' },
+  { id:2, ma:'TCCB',  ten:'Phòng Tổ chức – Cán bộ',      loai:'hanhchinh', cap:'tinhTp',    cha:1,    status:'active',   so:12, note:'',                             nguoiTao:'Admin',         ngayTao:'01/01/2024', nguoiSua:'Nguyễn Văn A', ngaySua:'10/03/2026' },
+  { id:3, ma:'KHDT',  ten:'Phòng Kế hoạch – Đầu tư',     loai:'hanhchinh', cap:'tinhTp',    cha:1,    status:'active',   so:8,  note:'',                             nguoiTao:'Admin',         ngayTao:'01/01/2024', nguoiSua:'Admin',         ngaySua:'01/01/2024' },
+  { id:4, ma:'TCKT',  ten:'Phòng Tài chính – Kế toán',   loai:'hanhchinh', cap:'tinhTp',    cha:1,    status:'inactive', so:0,  note:'Đã sáp nhập vào phòng KHĐT',   nguoiTao:'Admin',         ngayTao:'01/01/2024', nguoiSua:'Admin',         ngaySua:'05/03/2026' },
+  { id:5, ma:'BPTD',  ten:'Bộ phận Tuyển dụng',           loai:'hanhchinh', cap:'tinhTp',    cha:2,    status:'active',   so:3,  note:'',                             nguoiTao:'Admin',         ngayTao:'15/02/2024', nguoiSua:'Admin',         ngaySua:'15/02/2024' },
+  { id:6, ma:'TTNT',  ten:'Trung tâm Nghiên cứu',         loai:'sunghiep',  cap:'tinhTp',    cha:null, status:'active',   so:20, note:'Đơn vị sự nghiệp trực thuộc',  nguoiTao:'Admin',         ngayTao:'01/03/2024', nguoiSua:'Trần Thị B',   ngaySua:'12/03/2026' },
+];
+let _nextId = 7;
+let _detailId = null;
+let _editId = null;
+let _pendingFn = null;
+
+// ── SCREENS ───────────────────────────────────────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+function goList() {
+  showScreen('list');
+  renderTable(getFiltered());
+}
+
+// ── FILTER ────────────────────────────────────────────────────────────────────
+function getFiltered() {
+  const q  = (document.getElementById('inp-search').value || '').toLowerCase();
+  const l  = document.getElementById('sel-loai').value;
+  const st = document.getElementById('sel-status').value;
+  return DB.filter(u =>
+    (!q  || u.ma.toLowerCase().includes(q) || u.ten.toLowerCase().includes(q)) &&
+    (!l  || u.loai === l) &&
+    (!st || u.status === st)
+  );
+}
+
+function applyFilter() {
+  const data = getFiltered();
+  if (document.getElementById('view-list').style.display !== 'none') {
+    renderTable(data);
+  } else {
+    buildTree(data);
+  }
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function badge(status) {
+  return status === 'active'
+    ? '<span class="badge badge-active">Đang hoạt động</span>'
+    : '<span class="badge badge-inactive">Ngừng hoạt động</span>';
+}
+
+function getParent(u) {
+  return u.cha ? DB.find(x => x.id === u.cha) : null;
+}
+
+function today() {
+  return new Date().toLocaleDateString('vi-VN');
+}
+
+// ── TABLE ─────────────────────────────────────────────────────────────────────
+function renderTable(data) {
+  data = data || DB;
+  const tbody  = document.getElementById('tbody');
+  const empty  = document.getElementById('empty-list');
+  const pag    = document.getElementById('pagination');
+  const cnt    = document.getElementById('count-badge');
+  const sbar   = document.getElementById('status-bar');
+
+  cnt.textContent = data.length;
+  sbar.textContent = `Đang hiển thị ${data.length} / ${DB.length} đơn vị`;
+
+  if (data.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'flex';
+    pag.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  pag.style.display = 'flex';
+  document.getElementById('pag-info').textContent =
+    `Hiển thị 1–${data.length} trong ${data.length} bản ghi`;
+
+  tbody.innerHTML = data.map((u, i) => {
+    const par = getParent(u);
+    const togLabel = u.status === 'active' ? 'Ngừng HĐ' : 'Kích hoạt';
+    const togCls   = u.status === 'active' ? 'warning'  : '';
+    return `<tr>
+      <td style="color:var(--c-muted);font-size:12px">${i + 1}</td>
+      <td><code class="cell-code">${u.ma}</code></td>
+      <td>
+        <div style="font-weight:500">${u.ten}</div>
+        ${u.note ? `<div class="cell-sub">${u.note.slice(0, 44)}${u.note.length > 44 ? '…' : ''}</div>` : ''}
+      </td>
+      <td style="color:var(--c-muted);font-size:12px">${LOAI[u.loai] || u.loai}</td>
+      <td style="color:var(--c-muted);font-size:12px">${par ? par.ten : '<span style="color:var(--c-placeholder)">—</span>'}</td>
+      <td style="text-align:right;font-weight:600">${u.so}</td>
+      <td>${badge(u.status)}</td>
+      <td>
+        <div class="row-actions">
+          <button class="btn-link" onclick="openDetail(${u.id})">Chi tiết</button>
+          <button class="btn-link" onclick="openEdit(${u.id})">Sửa</button>
+          <button class="btn-link ${togCls}" onclick="askToggle(${u.id})">${togLabel}</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── TREE ──────────────────────────────────────────────────────────────────────
+function switchView(mode) {
+  const vl = document.getElementById('view-list');
+  const vt = document.getElementById('view-tree');
+  const bl = document.getElementById('btn-view-list');
+  const bt = document.getElementById('btn-view-tree');
+  if (mode === 'list') {
+    vl.style.display = ''; vt.style.display = 'none';
+    bl.classList.add('active'); bt.classList.remove('active');
+    renderTable(getFiltered());
+  } else {
+    vl.style.display = 'none'; vt.style.display = '';
+    bl.classList.remove('active'); bt.classList.add('active');
+    buildTree(getFiltered());
+  }
+}
+
+function buildTree(data) {
+  data = data || DB;
+  const roots = data.filter(u => !u.cha);
+  const root = document.getElementById('tree-root');
+  root.innerHTML = '';
+  roots.forEach(u => root.appendChild(mkNode(u, 0, data)));
+}
+
+const ICONS = ['🏛','🏢','📂','📁','📄'];
+function mkNode(u, depth, allData) {
+  const children = allData.filter(x => x.cha === u.id);
+  const li = document.createElement('li');
+  li.className = 'tree-item';
+
+  const par = getParent(u);
+  const togLabel = u.status === 'active' ? 'Ngừng HĐ' : 'Kích hoạt';
+
+  li.innerHTML = `
+    <div class="tree-row">
+      <button class="tree-toggle" onclick="toggleNode(this)"
+        ${!children.length ? 'disabled' : ''}>
+        ${children.length ? '▼' : '•'}
+      </button>
+      <span class="tree-node-icon">${ICONS[Math.min(depth, 4)]}</span>
+      <div class="tree-node-body">
+        <div class="tree-node-name">${u.ten} <code class="cell-code">${u.ma}</code></div>
+        <div class="tree-node-desc">${LOAI[u.loai] || ''} · ${CAP[u.cap] || ''}</div>
+      </div>
+      <div class="tree-node-meta">
+        ${u.so ? `<span class="badge badge-neutral">${u.so} CB</span>` : ''}
+        ${badge(u.status)}
+      </div>
+      <div class="row-actions" style="margin-left:8px">
+        <button class="btn-link" onclick="openDetail(${u.id})">Chi tiết</button>
+        <button class="btn-link" onclick="openEdit(${u.id})">Sửa</button>
+      </div>
+    </div>
+  `;
+
+  if (children.length) {
+    const ul = document.createElement('ul');
+    ul.className = 'tree-children';
+    children.forEach(c => ul.appendChild(mkNode(c, depth + 1, allData)));
+    li.appendChild(ul);
+  }
+  return li;
+}
+
+function toggleNode(btn) {
+  const li = btn.closest('.tree-item');
+  const ul = li.querySelector('.tree-children');
+  if (!ul) return;
+  const collapsed = ul.style.display === 'none';
+  ul.style.display = collapsed ? '' : 'none';
+  btn.textContent = collapsed ? '▼' : '▶';
+}
+
+// ── DETAIL ────────────────────────────────────────────────────────────────────
+function openDetail(id) {
+  _detailId = id;
+  renderDetail(id);
+  showScreen('detail');
+}
+
+function renderDetail(id) {
+  const u = DB.find(x => x.id === id);
+  if (!u) return;
+  const par = getParent(u);
+
+  document.getElementById('detail-crumb').textContent = u.ten;
+  document.getElementById('detail-h1').innerHTML = `${u.ten} ${badge(u.status)}`;
+
+  const togBtn = document.getElementById('btn-toggle-status');
+  togBtn.textContent = u.status === 'active' ? '⏸ Ngừng hoạt động' : '▶ Kích hoạt';
+
+  document.getElementById('detail-info').innerHTML = `
+    <div class="dfield"><label>Mã đơn vị</label><div class="val"><code class="cell-code">${u.ma}</code></div></div>
+    <div class="dfield"><label>Tên đơn vị</label><div class="val">${u.ten}</div></div>
+    <div class="dfield"><label>Loại tổ chức</label><div class="val">${LOAI[u.loai] || u.loai}</div></div>
+    <div class="dfield"><label>Cấp quản lý</label><div class="val">${CAP[u.cap] || u.cap}</div></div>
+    <div class="dfield"><label>Đơn vị cha</label><div class="val">${par
+      ? `<a href="#" onclick="openDetail(${par.id});return false;">${par.ten}</a>`
+      : '<span style="color:var(--c-muted)">— (Gốc cây tổ chức)</span>'}</div></div>
+    <div class="dfield"><label>Số lượng CBCCVC</label><div class="val"><strong>${u.so}</strong> người</div></div>
+    <div class="dfield"><label>Trạng thái</label><div class="val">${badge(u.status)}</div></div>
+    <div class="dfield full"><label>Ghi chú</label><div class="val">${u.note || '<span style="color:var(--c-muted)">Không có</span>'}</div></div>
+  `;
+
+  document.getElementById('detail-audit').innerHTML = `
+    <div class="dfield"><label>Người tạo</label><div class="val">${u.nguoiTao}</div></div>
+    <div class="dfield"><label>Ngày tạo</label><div class="val">${u.ngayTao}</div></div>
+    <div class="dfield"><label>Người cập nhật</label><div class="val">${u.nguoiSua}</div></div>
+    <div class="dfield"><label>Ngày cập nhật</label><div class="val">${u.ngaySua}</div></div>
+  `;
+
+  // Children table
+  const children = DB.filter(x => x.cha === id);
+  document.getElementById('children-count').textContent = children.length;
+  const cb = document.getElementById('children-body');
+  if (!children.length) {
+    cb.innerHTML = `<div class="empty-state" style="padding:var(--s6)">
+      <div class="empty-icon">🏗</div>
+      <div class="empty-title">Chưa có đơn vị con</div>
+      <div class="empty-desc">Đơn vị này chưa có đơn vị trực thuộc nào.</div>
+    </div>`;
+  } else {
+    cb.innerHTML = `
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr>
+            <th>Mã đơn vị</th><th>Tên đơn vị</th>
+            <th>Loại tổ chức</th>
+            <th style="text-align:right">CBCCVC</th>
+            <th>Trạng thái</th>
+          </tr></thead>
+          <tbody>${children.map(c => `<tr>
+            <td><code class="cell-code">${c.ma}</code></td>
+            <td><a href="#" onclick="openDetail(${c.id});return false;" style="font-weight:500">${c.ten}</a></td>
+            <td style="color:var(--c-muted);font-size:12px">${LOAI[c.loai]||c.loai}</td>
+            <td style="text-align:right;font-weight:600">${c.so}</td>
+            <td>${badge(c.status)}</td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>`;
+  }
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+function populateCha(excludeId) {
+  const sel = document.getElementById('f-cha');
+  sel.innerHTML = '<option value="">(Không có – gốc cây tổ chức)</option>';
+  DB.filter(u => u.id !== excludeId).forEach(u => {
+    const o = document.createElement('option');
+    o.value = u.id;
+    o.textContent = `${u.ten} (${u.ma})`;
+    sel.appendChild(o);
+  });
+}
+
+function clearErr(field) {
+  const el = document.getElementById('f-' + field);
+  const er = document.getElementById('err-' + field);
+  if (el) el.classList.remove('err');
+  if (er) er.classList.remove('visible');
+}
+
+function openAdd() {
+  _editId = null;
+  document.getElementById('modal-title').textContent = 'Thêm mới đơn vị';
+  document.getElementById('f-ma').readOnly = false;
+  ['ma','ten','loai','cap','cha','status','note'].forEach(k => {
+    const el = document.getElementById('f-' + k);
+    if (el) {
+      el.value = k === 'status' ? 'active' : '';
+      el.classList.remove('err');
+    }
+  });
+  ['ma','ten','loai','cap'].forEach(k => {
+    const er = document.getElementById('err-' + k);
+    if (er) er.classList.remove('visible');
+  });
+  populateCha(null);
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('f-ma').focus(), 80);
+}
+
+function openEdit(id) {
+  _editId = id;
+  const u = DB.find(x => x.id === id);
+  if (!u) return;
+  document.getElementById('modal-title').textContent = 'Cập nhật: ' + u.ten;
+  document.getElementById('f-ma').value      = u.ma;
+  document.getElementById('f-ma').readOnly   = true;
+  document.getElementById('f-ten').value     = u.ten;
+  document.getElementById('f-loai').value    = u.loai;
+  document.getElementById('f-cap').value     = u.cap;
+  document.getElementById('f-status').value  = u.status;
+  document.getElementById('f-note').value    = u.note;
+  ['ma','ten','loai','cap'].forEach(k => {
+    document.getElementById('f-' + k).classList.remove('err');
+    const er = document.getElementById('err-' + k);
+    if (er) er.classList.remove('visible');
+  });
+  populateCha(id);
+  document.getElementById('f-cha').value = u.cha || '';
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('f-ten').focus(), 80);
+}
+
+function onEditDetail() { openEdit(_detailId); }
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function closeModalBackdrop(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+function validate() {
+  let ok = true;
+  const checks = [
+    { id: 'f-ma',   err: 'err-ma',   msg: '⚠ Vui lòng nhập mã đơn vị' },
+    { id: 'f-ten',  err: 'err-ten',  msg: '⚠ Vui lòng nhập tên đơn vị' },
+    { id: 'f-loai', err: 'err-loai', msg: '⚠ Vui lòng chọn loại tổ chức' },
+    { id: 'f-cap',  err: 'err-cap',  msg: '⚠ Vui lòng chọn cấp quản lý' },
+  ];
+  checks.forEach(c => {
+    const el = document.getElementById(c.id);
+    const er = document.getElementById(c.err);
+    if (!el.value.trim()) {
+      el.classList.add('err');
+      er.textContent = c.msg;
+      er.classList.add('visible');
+      ok = false;
+    }
+  });
+  // Duplicate mã
+  const ma = document.getElementById('f-ma').value.trim().toUpperCase();
+  if (ma && !_editId) {
+    if (DB.some(u => u.ma.toUpperCase() === ma)) {
+      const el = document.getElementById('f-ma');
+      const er = document.getElementById('err-ma');
+      el.classList.add('err');
+      er.textContent = '⚠ Mã đơn vị đã tồn tại trong hệ thống';
+      er.classList.add('visible');
+      ok = false;
+    }
+  }
+  return ok;
+}
+
+function saveForm() {
+  if (!validate()) return;
+  const btn = document.getElementById('btn-save');
+  btn.disabled = true;
+  btn.textContent = '⏳ Đang lưu…';
+
+  setTimeout(() => {
+    const td = today();
+    if (_editId) {
+      const u = DB.find(x => x.id === _editId);
+      u.ten     = document.getElementById('f-ten').value.trim();
+      u.loai    = document.getElementById('f-loai').value;
+      u.cap     = document.getElementById('f-cap').value;
+      u.cha     = document.getElementById('f-cha').value ? +document.getElementById('f-cha').value : null;
+      u.status  = document.getElementById('f-status').value;
+      u.note    = document.getElementById('f-note').value.trim();
+      u.nguoiSua = 'Nguyễn Văn A';
+      u.ngaySua  = td;
+      toast('✔ Đã cập nhật đơn vị thành công');
+    } else {
+      DB.push({
+        id: _nextId++,
+        ma:       document.getElementById('f-ma').value.trim().toUpperCase(),
+        ten:      document.getElementById('f-ten').value.trim(),
+        loai:     document.getElementById('f-loai').value,
+        cap:      document.getElementById('f-cap').value,
+        cha:      document.getElementById('f-cha').value ? +document.getElementById('f-cha').value : null,
+        status:   document.getElementById('f-status').value,
+        so: 0,
+        note:     document.getElementById('f-note').value.trim(),
+        nguoiTao: 'Nguyễn Văn A', ngayTao: td,
+        nguoiSua: 'Nguyễn Văn A', ngaySua: td,
+      });
+      toast('✔ Đã thêm mới đơn vị thành công');
+    }
+    btn.disabled = false;
+    btn.textContent = '💾 Lưu';
+    closeModal();
+    renderTable(getFiltered());
+    if (_detailId && document.getElementById('screen-detail').classList.contains('active')) {
+      renderDetail(_detailId);
+    }
+  }, 700);
+}
+
+// ── DIALOG ────────────────────────────────────────────────────────────────────
+function askToggle(id) {
+  const u = DB.find(x => x.id === id);
+  if (!u) return;
+  const toActive = u.status !== 'active';
+  const action = toActive ? 'Kích hoạt' : 'Ngừng hoạt động';
+
+  document.getElementById('dlg-icon').textContent = toActive ? 'ℹ️' : '⚠️';
+  document.getElementById('dlg-icon').className = 'dialog-icon ' + (toActive ? 'info' : 'warn');
+  document.getElementById('dlg-title').textContent = `${action} đơn vị?`;
+  document.getElementById('dlg-desc').innerHTML = toActive
+    ? `Đơn vị <strong>${u.ten}</strong> sẽ được chuyển sang trạng thái <strong>Đang hoạt động</strong> và xuất hiện trở lại trong các ô chọn.`
+    : `Đơn vị <strong>${u.ten}</strong> sẽ được chuyển sang trạng thái <strong>Ngừng hoạt động</strong> và không xuất hiện trong các ô chọn khi tạo hồ sơ mới.`;
+
+  const okBtn = document.getElementById('dlg-confirm');
+  okBtn.textContent = action;
+  okBtn.className = toActive ? 'btn btn-primary' : 'btn btn-danger';
+
+  _pendingFn = () => {
+    u.status = toActive ? 'active' : 'inactive';
+    u.nguoiSua = 'Nguyễn Văn A';
+    u.ngaySua = today();
+    renderTable(getFiltered());
+    if (_detailId && document.getElementById('screen-detail').classList.contains('active')) {
+      renderDetail(_detailId);
+    }
+    toast(`✔ Đã ${toActive ? 'kích hoạt' : 'ngừng hoạt động'} đơn vị "${u.ten}"`);
+  };
+  document.getElementById('dialog-overlay').classList.add('open');
+}
+
+function onToggleStatus() { if (_detailId) askToggle(_detailId); }
+
+function confirmAction() {
+  if (_pendingFn) _pendingFn();
+  _pendingFn = null;
+  closeDialog();
+}
+
+function closeDialog() { document.getElementById('dialog-overlay').classList.remove('open'); }
+
+function closeDialogBackdrop(e) {
+  if (e.target === document.getElementById('dialog-overlay')) closeDialog();
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function toast(msg, type) {
+  const stack = document.getElementById('toast-stack');
+  const t = document.createElement('div');
+  t.className = 'toast' + (type === 'error' ? ' error' : '');
+  t.innerHTML = `
+    <span>${type === 'error' ? '✕' : '✔'}</span>
+    <span style="flex:1">${msg}</span>
+    <span class="toast-close" onclick="this.parentElement.remove()">✕</span>
+  `;
+  stack.appendChild(t);
+  setTimeout(() => t.style.transition = 'opacity .3s', 3400);
+  setTimeout(() => t.remove(), 4200);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderTable(DB);
+</script>
+</body>
+</html>

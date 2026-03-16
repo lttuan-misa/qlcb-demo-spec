@@ -4,14 +4,29 @@
    overrides and new components go here.
    ============================================================ */
 
+.ui-version-stamp {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  z-index: 9999;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  background: #111827;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(16, 24, 40, 0.2);
+}
+
 /* ---- Breadcrumb ---- */
 .breadcrumb {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: 0.88rem;
+  font-size: 12px;
   color: var(--color-muted);
-  padding: 0 0 var(--space-3);
+  padding: 0 0 var(--space-2);
 }
 
 .breadcrumb a {
@@ -40,9 +55,15 @@
   align-items: flex-end;
 }
 
+#tree-region {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+}
+
 /* ---- Tree view ---- */
 .tree-root {
-  padding: 0;
+  padding: var(--space-2);
   margin: 0;
   list-style: none;
 }
@@ -55,7 +76,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: 8px var(--space-3);
+  padding: 8px var(--space-2);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 0.12s;
@@ -99,14 +120,14 @@
 
 .tree-node-label {
   flex: 1;
-  font-size: 0.95rem;
+  font-size: 13px;
 }
 
 .tree-node-meta {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: 0.82rem;
+  font-size: 12px;
   color: var(--color-muted);
 }
 
@@ -115,7 +136,7 @@
   color: var(--color-primary);
   border-radius: 999px;
   padding: 2px 8px;
-  font-size: 0.78rem;
+  font-size: 11px;
   font-weight: 600;
 }
 
@@ -129,6 +150,10 @@
 .detail-panel {
   display: grid;
   gap: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  padding: var(--space-4);
 }
 
 .detail-header {
@@ -140,7 +165,8 @@
 
 .detail-header h2 {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 18px;
+  line-height: 1.4;
 }
 
 .detail-header-actions {
@@ -163,38 +189,36 @@
 
 .detail-field label {
   display: block;
-  font-size: 0.82rem;
+  font-size: 12px;
   color: var(--color-muted);
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .detail-field .detail-value {
-  font-size: 0.95rem;
+  font-size: 13px;
   font-weight: 500;
 }
 
 .detail-section-title {
-  font-size: 0.9rem;
+  font-size: 13px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-muted);
+  color: #344054;
   margin: var(--space-4) 0 var(--space-2);
-  padding-bottom: var(--space-1);
+  padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--color-border);
 }
 
 /* ---- Confirmation dialog ---- */
 .confirm-dialog {
   border: none;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-sm);
   width: min(440px, 92vw);
   box-shadow: var(--shadow-md);
   padding: 0;
 }
 
 .confirm-dialog::backdrop {
-  background: rgba(12, 34, 29, 0.42);
+  background: rgba(16, 24, 40, 0.44);
 }
 
 .confirm-content {
@@ -211,13 +235,13 @@
 
 .confirm-content h3 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 16px;
 }
 
 .confirm-content p {
   margin: 0;
   color: var(--color-muted);
-  font-size: 0.93rem;
+  font-size: 13px;
 }
 
 .confirm-actions {
@@ -244,12 +268,7 @@
 }
 
 .form-ghi-chu textarea {
-  width: 100%;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
-  font-size: 0.95rem;
-  font-family: var(--font-body);
+  min-height: 84px;
   resize: vertical;
 }
 
@@ -260,7 +279,7 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-3) 0 0;
-  font-size: 0.88rem;
+  font-size: 12px;
   color: var(--color-muted);
 }
 
@@ -279,7 +298,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.88rem;
+  font-size: 13px;
 }
 
 .page-btn.is-active {
@@ -312,7 +331,7 @@
 }
 
 .skeleton-row {
-  height: 44px;
+  height: 40px;
   margin-bottom: var(--space-2);
 }
 
