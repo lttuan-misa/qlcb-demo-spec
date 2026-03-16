@@ -1,0 +1,332 @@
+/* ============================================================
+   co-cau-to-chuc.css — Feature 002 specific styles
+   Reuses all tokens from tokens.css. Only feature-specific
+   overrides and new components go here.
+   ============================================================ */
+
+/* ---- Breadcrumb ---- */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.88rem;
+  color: var(--color-muted);
+  padding: 0 0 var(--space-3);
+}
+
+.breadcrumb a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-sep {
+  color: var(--color-border);
+  user-select: none;
+}
+
+.breadcrumb-current {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+/* ---- Toolbar extensions ---- */
+.toolbar-actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-end;
+}
+
+/* ---- Tree view ---- */
+.tree-root {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.tree-node {
+  list-style: none;
+}
+
+.tree-node-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 8px var(--space-3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.tree-node-row:hover {
+  background: var(--color-surface-alt);
+}
+
+.tree-toggle {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.tree-toggle:hover {
+  background: var(--color-secondary);
+}
+
+.tree-toggle.is-expanded::before {
+  content: "▼";
+}
+
+.tree-toggle.is-collapsed::before {
+  content: "▶";
+}
+
+.tree-toggle.is-leaf::before {
+  content: "•";
+  color: var(--color-border);
+}
+
+.tree-node-label {
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+.tree-node-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.82rem;
+  color: var(--color-muted);
+}
+
+.tree-cbccvc-badge {
+  background: var(--color-secondary);
+  color: var(--color-primary);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.tree-node-children {
+  padding-left: var(--space-5);
+  list-style: none;
+  margin: 0;
+}
+
+/* ---- Detail panel ---- */
+.detail-panel {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.detail-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.detail-header-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.detail-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3) var(--space-5);
+}
+
+@media (max-width: 760px) {
+  .detail-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-field label {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--color-muted);
+  margin-bottom: 2px;
+}
+
+.detail-field .detail-value {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.detail-section-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+  margin: var(--space-4) 0 var(--space-2);
+  padding-bottom: var(--space-1);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ---- Confirmation dialog ---- */
+.confirm-dialog {
+  border: none;
+  border-radius: var(--radius-lg);
+  width: min(440px, 92vw);
+  box-shadow: var(--shadow-md);
+  padding: 0;
+}
+
+.confirm-dialog::backdrop {
+  background: rgba(12, 34, 29, 0.42);
+}
+
+.confirm-content {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.confirm-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.confirm-content h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.confirm-content p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.93rem;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+/* ---- Danger button ---- */
+.btn-danger {
+  background: var(--color-danger);
+  color: #fff;
+  border-color: transparent;
+}
+
+.btn-danger:hover {
+  background: color-mix(in srgb, var(--color-danger) 88%, black 12%);
+}
+
+/* ---- Form textarea ---- */
+.form-ghi-chu {
+  grid-column: 1 / -1;
+}
+
+.form-ghi-chu textarea {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  resize: vertical;
+}
+
+/* ---- Pagination ---- */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) 0 0;
+  font-size: 0.88rem;
+  color: var(--color-muted);
+}
+
+.pagination-pages {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.page-btn {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+
+.page-btn.is-active {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  border-color: var(--color-primary);
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---- Skeleton loader ---- */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-alt) 25%,
+    var(--color-secondary) 50%,
+    var(--color-surface-alt) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-row {
+  height: 44px;
+  margin-bottom: var(--space-2);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 880px) {
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar-actions {
+    flex-wrap: wrap;
+  }
+
+  .detail-header {
+    flex-direction: column;
+  }
+}
