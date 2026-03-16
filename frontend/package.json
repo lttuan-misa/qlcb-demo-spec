@@ -1,0 +1,8 @@
+{
+  "name": "qlcb-demo-ui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "smoke": "node tests/smoke/validation-smoke.test.js"
+  }
+}
