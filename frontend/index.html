@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QLCB Demo - Danh muc Chuc vu, Chuc danh</title>
+    <link rel="stylesheet" href="./assets/css/tokens.css" />
+    <link rel="stylesheet" href="./assets/css/app.css" />
+  </head>
+  <body>
+    <div class="page-bg"></div>
+    <main class="app-shell">
+      <header class="app-header">
+        <p class="app-kicker">MISA QLCB - Ban Demo UI</p>
+        <h1>Quan ly danh muc Chuc vu va Chuc danh</h1>
+        <p class="app-subtitle">
+          Pham vi demo: UI thuần HTML/CSS/JS, du lieu client-side, khong backend/database.
+        </p>
+      </header>
+
+      <section class="panel panel-config" id="don-vi-config"></section>
+
+      <section class="panel panel-main">
+        <div class="tabs" role="tablist" aria-label="Danh muc">
+          <button class="tab-btn is-active" id="tab-chuc-vu" data-tab="chuc_vu" role="tab" aria-selected="true">
+            Danh muc Chuc vu
+          </button>
+          <button class="tab-btn" id="tab-chuc-danh" data-tab="chuc_danh" role="tab" aria-selected="false">
+            Danh muc Chuc danh
+          </button>
+        </div>
+
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <label for="search-input">Tim kiem</label>
+            <input id="search-input" type="text" placeholder="Nhap Ma hoac Ten..." />
+          </div>
+          <div class="toolbar-group">
+            <label for="filter-phan-loai">Phan loai</label>
+            <select id="filter-phan-loai">
+              <option value="all">Tat ca</option>
+            </select>
+          </div>
+          <div class="toolbar-group">
+            <label for="filter-trang-thai">Trang thai</label>
+            <select id="filter-trang-thai">
+              <option value="all">Tat ca</option>
+              <option value="dang_su_dung">Dang su dung</option>
+              <option value="khong_su_dung">Khong su dung</option>
+            </select>
+          </div>
+          <button id="btn-them-moi" class="btn btn-primary" type="button">Them moi</button>
+        </div>
+
+        <div id="status-region" aria-live="polite"></div>
+        <div id="table-region"></div>
+      </section>
+    </main>
+
+    <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <dialog id="item-modal" class="item-modal">
+      <form id="item-form" class="item-form" method="dialog" novalidate>
+        <header class="item-form-header">
+          <h2 id="item-form-title">Them moi</h2>
+          <button type="button" id="btn-close-modal" class="btn btn-text" aria-label="Dong">Dong</button>
+        </header>
+
+        <div class="form-grid">
+          <label>
+            <span>Ma</span>
+            <input id="field-ma" name="ma" type="text" maxlength="30" required />
+            <small data-error-for="ma" class="field-error"></small>
+          </label>
+
+          <label>
+            <span>Ten</span>
+            <input id="field-ten" name="ten" type="text" maxlength="120" required />
+            <small data-error-for="ten" class="field-error"></small>
+          </label>
+
+          <label>
+            <span>Phan loai</span>
+            <input id="field-phan-loai" name="phanLoai" type="text" maxlength="80" required />
+            <small data-error-for="phanLoai" class="field-error"></small>
+          </label>
+
+          <label>
+            <span>Trang thai su dung</span>
+            <select id="field-trang-thai" name="trangThaiSuDung" required>
+              <option value="dang_su_dung">Dang su dung</option>
+              <option value="khong_su_dung">Khong su dung</option>
+            </select>
+            <small data-error-for="trangThaiSuDung" class="field-error"></small>
+          </label>
+        </div>
+
+        <footer class="item-form-footer">
+          <button type="button" id="btn-cancel" class="btn btn-secondary">Huy</button>
+          <button type="submit" id="btn-save" class="btn btn-primary">Luu</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <script type="module" src="./assets/js/app.js"></script>
+  </body>
+</html>
